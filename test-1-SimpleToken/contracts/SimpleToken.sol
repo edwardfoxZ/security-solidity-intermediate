@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.6.0;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 // Goal to test underflow and overflow uints
 
@@ -23,7 +24,7 @@ contract SimpleToken is Ownable {
     }
 
     function transfer(address _to, uint256 _amount) external {
-        require(balances[msg.sender] - _amount >= 0, "Not enough to transfer");
+        require(balances[msg.sender] >= _amount, "Not enough to transfer");
         balances[msg.sender] -= _amount;
         balances[_to] += _amount;
     }

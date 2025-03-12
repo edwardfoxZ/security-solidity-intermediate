@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { BigNumber } = require("bignumber.js");
 
 describe("SimpleToken", () => {
   let SimpleToken;
@@ -19,10 +20,12 @@ describe("SimpleToken", () => {
 
   it("Should allow a user to transfer", async () => {
     await contract.transfer(account1.address, 11);
+    const _totalSupply = await contract.getTotalSupply();
+    const totalSupply = new BigNumber(_totalSupply);
 
     expect(await contract.getBalanceOf(account1.address)).to.eq(11);
     expect(await contract.getBalanceOf(deployer.address)).to.eq(
-      (await contract.getTotalSupply()) - 11
+      totalSupply - 11
     );
   });
 
@@ -35,8 +38,8 @@ describe("SimpleToken", () => {
 
   it("Should overflow if an attacker transfer an amount of greater than its balance", async () => {
     await contract.transfer(attacker.address, 10);
-    await contract.connect(attacker).transfer(account1.address, 11);
-
-    expect(await contract.getBalanceOf(attacker.address)).to.eq(ethers.MaxUint256)
+    await expect(
+      contract.connect(attacker).transfer(account1.address, 11)
+    ).to.be.revertedWith("Not enough to transfer");
   });
 });
