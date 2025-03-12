@@ -1,0 +1,7 @@
+npm install --save-dev hardhat
+
+
+npm install @openzeppelin/contracts --save
+
+
+npm install bignumber.js
